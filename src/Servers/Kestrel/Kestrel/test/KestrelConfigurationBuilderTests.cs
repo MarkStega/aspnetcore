@@ -37,30 +37,6 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Tests
         }
 
         [Fact]
-        [SkipOnHelix("(none)", Queues = "Ubuntu.1604.Amd64.Open;Windows.10.Amd64.Open")]
-        [OSSkipCondition(OperatingSystems.Linux, SkipReason = "This check only applies to Mac OS as it is the one that checks the key for validity.")]
-        [OSSkipCondition(OperatingSystems.Windows, SkipReason = "This check only applies to Mac OS as it is the one that checks the key for validity.")]
-        public void DevCertWithInvalidPrivateKeyProducesCustomWarning()
-        {
-            var serverOptions = CreateServerOptions();
-            var sink = serverOptions.ApplicationServices.GetRequiredService<TestSink>();
-            var messages = new List<WriteContext>();
-            sink.MessageLogged += wc => messages.Add(wc);
-            serverOptions.Configure()
-                .LocalhostEndpoint(5001, endpointOptions => { });
-
-            Assert.Empty(serverOptions.ListenOptions);
-
-            serverOptions.ConfigurationLoader.Load();
-
-            Assert.Single(serverOptions.ListenOptions);
-            Assert.Equal(5001, serverOptions.ListenOptions[0].IPEndPoint.Port);
-
-            Assert.Equal(5, messages[^1].EventId);
-            Assert.Equal(LogLevel.Warning, messages[^1].LogLevel);
-        }
-
-        [Fact]
         public void ConfigureNamedEndpoint_OnlyRunForMatchingConfig()
         {
             var found = false;
